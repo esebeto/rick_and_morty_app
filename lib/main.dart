@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ApiProvider(),
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Rick And Morty - APP',
         routerConfig: _router,
       ),
