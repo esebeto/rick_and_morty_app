@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:rick_and_morty_app/api/character_api.dart';
-import 'package:rick_and_morty_app/providers/api_provider.dart';
+import 'package:rick_and_morty_app/providers/character_provider.dart';
+import 'package:rick_and_morty_app/providers/episode_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,20 +15,23 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    final apiProvider = Provider.of<ApiProvider>(context, listen: false);
-    apiProvider.getAllCharacters();
+    final characterProvider =
+        Provider.of<CharacterProvider>(context, listen: false);
+    final episodeProvider =
+        Provider.of<EpisodeProvider>(context, listen: false);
+    characterProvider.getAllCharacters();
+    episodeProvider.getAllEpisodes();
   }
-
-  final CharacterApi characterApi = CharacterApi();
 
   @override
   Widget build(BuildContext context) {
-    final apiProvider = Provider.of<ApiProvider>(context);
+    final characterProvider = Provider.of<CharacterProvider>(context);
+    final episodeProvider = Provider.of<EpisodeProvider>(context);
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Rick & Morty'),
+          title: const Text('Rick & Morty'),
         ),
         body: Column(
           children: [
@@ -41,22 +44,31 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(
               height: 100,
-              child: apiProvider.characters.isNotEmpty
-                  ? CharacterAvatar(apiProvider: apiProvider)
+              child: characterProvider.characters.isNotEmpty
+                  ? CharacterAvatar(characterProvider: characterProvider)
                   : const Center(
                       child: CircularProgressIndicator(),
                     ),
             ),
+            // Expanded(
+            //   child: SizedBox(
+            //     child: characterProvider.characters.isNotEmpty
+            //         ? CharacterList(
+            //             characterProvider: characterProvider,
+            //           )
+            //         : const Center(
+            //             child: CircularProgressIndicator(),
+            //           ),
+            //   ),
+            // ),
             Expanded(
-              child: SizedBox(
-                child: apiProvider.characters.isNotEmpty
-                    ? CharacterList(
-                        apiProvider: apiProvider,
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-              ),
+              child: episodeProvider.episode.isNotEmpty
+                  ? EpisodeList(
+                      episodeProvider: episodeProvider,
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    ),
             ),
           ],
         ),
@@ -65,18 +77,43 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class CharacterAvatar extends StatelessWidget {
-  const CharacterAvatar({super.key, required this.apiProvider});
+class EpisodeList extends StatelessWidget {
+  const EpisodeList({super.key, required this.episodeProvider});
 
-  final ApiProvider apiProvider;
+  final EpisodeProvider episodeProvider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView.builder(
+        itemCount: episodeProvider.episode.length,
+        itemBuilder: (context, index) {
+          final episode = episodeProvider.episode[index];
+          return ListTile(
+            title: Text(episode.name!),
+            subtitle: Text(episode.airDate!),
+            leading: Text(episode.episode!),
+            trailing: const Icon(Icons.arrow_forward_ios),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CharacterAvatar extends StatelessWidget {
+  const CharacterAvatar({super.key, required this.characterProvider});
+
+  final CharacterProvider characterProvider;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: apiProvider.characters.length,
+      itemCount: characterProvider.characters.length,
       itemBuilder: (context, index) {
-        final character = apiProvider.characters[index];
+        final character = characterProvider.characters[index];
         return Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: Column(
@@ -99,18 +136,18 @@ class CharacterAvatar extends StatelessWidget {
 }
 
 class CharacterList extends StatelessWidget {
-  const CharacterList({super.key, required this.apiProvider});
+  const CharacterList({super.key, required this.characterProvider});
 
-  final ApiProvider apiProvider;
+  final CharacterProvider characterProvider;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, childAspectRatio: 1 / 1.2),
-      itemCount: apiProvider.characters.length,
+      itemCount: characterProvider.characters.length,
       itemBuilder: (context, index) {
-        final character = apiProvider.characters[index];
+        final character = characterProvider.characters[index];
 
         return GestureDetector(
           onTap: () {

@@ -1,8 +1,68 @@
+// To parse this JSON data, do
+//
+//     final episodeResponse = episodeResponseFromJson(jsonString);
+
 import 'dart:convert';
 
-Episode episodeFromJson(String str) => Episode.fromJson(json.decode(str));
+EpisodeResponse episodeResponseFromJson(String str) =>
+    EpisodeResponse.fromJson(json.decode(str));
 
-String episodeToJson(Episode data) => json.encode(data.toJson());
+String episodeResponseToJson(EpisodeResponse data) =>
+    json.encode(data.toJson());
+
+class EpisodeResponse {
+  Info? info;
+  List<Episode>? results;
+
+  EpisodeResponse({
+    this.info,
+    this.results,
+  });
+
+  factory EpisodeResponse.fromJson(Map<String, dynamic> json) =>
+      EpisodeResponse(
+        info: json["info"] == null ? null : Info.fromJson(json["info"]),
+        results: json["results"] == null
+            ? []
+            : List<Episode>.from(
+                json["results"]!.map((x) => Episode.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "info": info?.toJson(),
+        "results": results == null
+            ? []
+            : List<dynamic>.from(results!.map((x) => x.toJson())),
+      };
+}
+
+class Info {
+  int? count;
+  int? pages;
+  String? next;
+  dynamic prev;
+
+  Info({
+    this.count,
+    this.pages,
+    this.next,
+    this.prev,
+  });
+
+  factory Info.fromJson(Map<String, dynamic> json) => Info(
+        count: json["count"],
+        pages: json["pages"],
+        next: json["next"],
+        prev: json["prev"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "count": count,
+        "pages": pages,
+        "next": next,
+        "prev": prev,
+      };
+}
 
 class Episode {
   int? id;
