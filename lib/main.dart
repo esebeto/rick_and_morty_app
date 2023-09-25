@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'package:rick_and_morty_app/providers/character_provider.dart';
 import 'package:rick_and_morty_app/providers/episode_provider.dart';
+import 'package:rick_and_morty_app/providers/location_provider.dart';
+
 import 'package:rick_and_morty_app/screens/character_details_page.dart';
 import 'package:rick_and_morty_app/screens/home_page.dart';
 
@@ -40,6 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => EpisodeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LocationProvider(),
         ),
       ],
       child: MaterialApp.router(

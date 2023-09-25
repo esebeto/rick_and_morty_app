@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_and_morty_app/providers/character_provider.dart';
 import 'package:rick_and_morty_app/providers/episode_provider.dart';
+import 'package:rick_and_morty_app/providers/location_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,14 +20,18 @@ class _HomePageState extends State<HomePage> {
         Provider.of<CharacterProvider>(context, listen: false);
     final episodeProvider =
         Provider.of<EpisodeProvider>(context, listen: false);
+    final locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
     characterProvider.getAllCharacters();
     episodeProvider.getAllEpisodes();
+    locationProvider.getAllLocations();
   }
 
   @override
   Widget build(BuildContext context) {
     final characterProvider = Provider.of<CharacterProvider>(context);
     final episodeProvider = Provider.of<EpisodeProvider>(context);
+    final locationProvider = Provider.of<LocationProvider>(context);
 
     return SafeArea(
       child: Scaffold(
@@ -50,18 +55,8 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator(),
                     ),
             ),
-            // Expanded(
-            //   child: SizedBox(
-            //     child: characterProvider.characters.isNotEmpty
-            //         ? CharacterList(
-            //             characterProvider: characterProvider,
-            //           )
-            //         : const Center(
-            //             child: CircularProgressIndicator(),
-            //           ),
-            //   ),
-            // ),
             Expanded(
+              flex: 2,
               child: episodeProvider.episode.isNotEmpty
                   ? EpisodeList(
                       episodeProvider: episodeProvider,
@@ -70,8 +65,42 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator(),
                     ),
             ),
+            Expanded(
+              child: locationProvider.location.isNotEmpty
+                  ? LocationList(
+                      locationProvider: locationProvider,
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class LocationList extends StatelessWidget {
+  const LocationList({super.key, required this.locationProvider});
+
+  final LocationProvider locationProvider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView.builder(
+        itemCount: locationProvider.location.length,
+        itemBuilder: (context, index) {
+          final location = locationProvider.location[index];
+          return ListTile(
+            title: Text(location.name!),
+            subtitle: Text(location.dimension!),
+            leading: Text(location.type!),
+            trailing: const Icon(Icons.arrow_forward_ios),
+          );
+        },
       ),
     );
   }

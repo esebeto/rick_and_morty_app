@@ -8,13 +8,12 @@ class EpisodeProvider with ChangeNotifier {
 
   Future<void> getAllEpisodes() async {
     final result = await http.get(Uri.https(url, "/api/episode/"));
-    print(result.body);
     if (result.statusCode == 200) {
       final response = episodeResponseFromJson(result.body);
       episode.addAll(response.results!);
       notifyListeners();
     } else {
-      throw Exception("Failed to load characters");
+      throw Exception("Failed to load episode");
     }
   }
 }
