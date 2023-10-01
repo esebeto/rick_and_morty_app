@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:rick_and_morty_app/model/character_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:rick_and_morty_app/model/character_model.dart';
 import 'package:rick_and_morty_app/model/episode_model.dart';
 
 class CharacterProvider with ChangeNotifier {
@@ -12,6 +12,7 @@ class CharacterProvider with ChangeNotifier {
   List<Character> characters = [];
   List<Character> randomCharacters = [];
   List<Episode> episodes = [];
+  List<Character> rickCharacters = [];
 
   Future<int> getCountCharacters() async {
     final response = await http.get(Uri.https(url, '/api/character/'));
@@ -42,27 +43,41 @@ class CharacterProvider with ChangeNotifier {
   }
 
   Future<void> getRandomCharacters() async {
-    int cantidadElementos = 10;
+    int characters = 10;
+    final total = await getCountCharacters();
 
-    final count = await getCountCharacters();
-
-    List<int> numerosAleatorios = List.generate(
-      cantidadElementos,
+    List<int> randomNumbers = List.generate(
+      characters,
       (index) {
         Random random = Random();
-        return random.nextInt(count);
+        return random.nextInt(total);
       },
     );
 
-    String numerosComoString = numerosAleatorios.join(', ');
+    String rCharacters = randomNumbers.join(', ');
 
-    final response = await http.get(Uri.parse(
-        'https://rickandmortyapi.com/api/character/$numerosComoString'));
+    final response = await http.get(
+        Uri.parse('https://rickandmortyapi.com/api/character/$rCharacters'));
 
     if (response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
       randomCharacters = (jsonBody as List)
           .map((randomCharacterJson) => Character.fromJson(randomCharacterJson))
+          .toList();
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load characters');
+    }
+  }
+
+  Future<void> getCharacterByName(String name, int page) async {
+    final response = await http.get(Uri.parse(
+        'https://rickandmortyapi.com/api/character/?page=$page&name=$name'));
+
+    if (response.statusCode == 200) {
+      final jsonBody = json.decode(response.body);
+      rickCharacters = (jsonBody['results'] as List)
+          .map((rickCharacterJson) => Character.fromJson(rickCharacterJson))
           .toList();
       notifyListeners();
     } else {
