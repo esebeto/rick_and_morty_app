@@ -85,25 +85,16 @@ class CharacterProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getEpisodesByCharacter(Character character) async {
+  Future<List<Episode>> getEpisodes(Character character) async {
     episodes = [];
 
-    // for (var i = 0; i < character.episode.length; i++) {
-    //   final response = await http.get(Uri.parse(character.episode[i]));
+    for (var i = 0; i < character.episode!.length; i++) {
+      final result = await http.get(Uri.parse(character.episode![i]));
+      final response = episodeFromJson(result.body);
+      episodes.add(response);
+      notifyListeners();
+    }
 
-    //   if (response.statusCode == 200) {
-    //     final jsonBody = json.decode(response.body);
-    //     if (jsonBody is List) {
-    //       episodes = jsonBody
-    //           .map((episodesJson) => Episode.fromJson(episodesJson))
-    //           .toList();
-    //       notifyListeners();
-    //     } else {
-    //       throw Exception('Failed to load characters');
-    //     }
-    //   } else {
-    //     throw Exception('Failed to load characters');
-    //   }
-    // }
+    return episodes;
   }
 }

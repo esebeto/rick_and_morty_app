@@ -27,13 +27,13 @@ class CharacterGrid extends StatelessWidget {
 
         return GestureDetector(
           onTap: () {
-            context.go('/character');
+            context.go('/character', extra: rickCharacter);
           },
           child: Card(
             child: Column(
               children: [
-                Image.network(rickCharacter.image),
-                Text(rickCharacter.name),
+                Image.network(rickCharacter.image!),
+                Text(rickCharacter.name!),
               ],
             ),
           ),

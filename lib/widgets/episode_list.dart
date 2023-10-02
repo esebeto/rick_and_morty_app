@@ -7,6 +7,7 @@ class EpisodeList extends StatelessWidget {
     required this.episodeProvider,
     required this.scrollController,
     required this.isLoading,
+    required character,
   });
 
   final EpisodeProvider episodeProvider;
@@ -26,9 +27,9 @@ class EpisodeList extends StatelessWidget {
           if (index < episodeProvider.episodes.length) {
             final episode = episodeProvider.episodes[index];
             return ListTile(
-              title: Text(episode.name),
-              subtitle: Text(episode.airDate),
-              leading: Text(episode.episode),
+              title: Text(episode.name!),
+              subtitle: Text(episode.airDate!),
+              leading: Text(episode.episode!),
               trailing: const Icon(Icons.arrow_forward_ios),
             );
           } else {

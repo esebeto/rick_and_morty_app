@@ -42,18 +42,19 @@ class _CharactersPageState extends State<CharactersPage> {
     final characterProvider = Provider.of<CharacterProvider>(context);
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Characters'),
-        ),
-        body: characterProvider.characters.isNotEmpty
-            ? CharacterList(
-                characterProvider: characterProvider,
-                scrollController: scrollController,
-                isLoading: isLoading,
-              )
-            : const Center(
-                child: CircularProgressIndicator(),
-              ));
+      appBar: AppBar(
+        title: const Text('Characters'),
+      ),
+      body: characterProvider.characters.isNotEmpty
+          ? CharacterList(
+              characterProvider: characterProvider,
+              scrollController: scrollController,
+              isLoading: isLoading,
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
+    );
   }
 }
 
@@ -82,13 +83,13 @@ class CharacterList extends StatelessWidget {
 
         return GestureDetector(
           onTap: () {
-            context.go('/character');
+            context.go('/character', extra: character);
           },
           child: Card(
             child: Column(
               children: [
-                Image.network(character.image),
-                Text(character.name),
+                Image.network(character.image!),
+                Text(character.name!),
               ],
             ),
           ),

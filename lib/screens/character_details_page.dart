@@ -19,39 +19,112 @@ class _CharacterDetailsState extends State<CharacterDetails> {
     super.initState();
     final characterProvider =
         Provider.of<CharacterProvider>(context, listen: false);
-    characterProvider.getEpisodesByCharacter(widget.character);
+    characterProvider.getEpisodes(widget.character);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(widget.character.name),
-          ),
-          body: Column(
-            children: [
-              Center(
-                child: SizedBox(
-                  height: 300,
-                  width: 300,
-                  child: Hero(
-                    tag: widget.character.id,
-                    child: Image.network(
-                      widget.character.image,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+    final characterProvider = Provider.of<CharacterProvider>(context);
+    return Scaffold(
+      // body: CustomScrollView(
+      //   slivers: [
+      //     SliverAppBar(
+      //       floating: false,
+      //       title: Text(widget.character.name!),
+      //       pinned: false,
+      //       expandedHeight: 450,
+      //       flexibleSpace: Image.network(
+      //         widget.character.image!,
+      //         fit: BoxFit.cover,
+      //       ),
+      //     ),
+      //   ],
+      // ),
+
+      body: Column(
+        children: [
+          Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+              child: Hero(
+                tag: widget.character.id!,
+                child: Image.network(
+                  widget.character.image!,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const Text('Episodes'),
-              //EpisodeList(character: character),
+            ),
+          ),
+          Row(
+            children: [
+              Card(
+                child: Column(
+                  children: [
+                    Text(widget.character.created.toString()),
+                    Text(widget.character.gender!),
+                    Text(widget.character.species!),
+                    Text(widget.character.name!),
+                    Text(widget.character.status!),
+                    Text(widget.character.type!),
+                    Text(widget.character.url!),
+                    Text(widget.character.episode!.length.toString()),
+                    Text(widget.character.id.toString()),
+                    Text(widget.character.location!.name!),
+                    Text(widget.character.origin!.name!),
+                  ],
+                ),
+              ),
             ],
-          )),
+          ),
+          const Text('Episodes'),
+          Expanded(
+            child: EpisodeList(
+                character: character, characterProvider: characterProvider),
+          ),
+        ],
+      ),
     );
   }
 }
+
+class EpisodeList extends StatelessWidget {
+  const EpisodeList({
+    super.key,
+    required this.characterProvider,
+    required character,
+  });
+
+  final CharacterProvider characterProvider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView.builder(
+        itemCount: characterProvider.episodes.length,
+        itemBuilder: (context, index) {
+          if (index < characterProvider.episodes.length) {
+            final episode = characterProvider.episodes[index];
+            return ListTile(
+              title: Text(episode.name!),
+              subtitle: Text(episode.airDate!),
+              leading: Text(episode.episode!),
+              trailing: const Icon(Icons.arrow_forward_ios),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+
+
 
 // class EpisodeList extends StatefulWidget {
 //   const EpisodeList({super.key, required this.character});
@@ -68,7 +141,7 @@ class _CharacterDetailsState extends State<CharacterDetails> {
 //     super.initState();
 //     final characterProvider =
 //         Provider.of<CharacterProvider>(context, listen: false);
-//     characterProvider.getEpisodesByCharacter(widget.character);
+//     characterProvider.getEpisodes(widget.character);
 //   }
 
 //   @override
@@ -78,6 +151,7 @@ class _CharacterDetailsState extends State<CharacterDetails> {
 //       itemCount: characterProvider.episodes.length,
 //       itemBuilder: (context, index) {
 //         final episode = characterProvider.episodes[index];
+//         print(episode.name);
 //         return ListTile(
 //           leading: Text(episode.episode!),
 //           title: Text(episode.name!),
