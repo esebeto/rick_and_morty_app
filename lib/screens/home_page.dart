@@ -7,6 +7,7 @@ import 'package:rick_and_morty_app/providers/episode_provider.dart';
 import 'package:rick_and_morty_app/providers/location_provider.dart';
 import 'package:rick_and_morty_app/widgets/character_avatar.dart';
 import 'package:rick_and_morty_app/widgets/character_grid.dart';
+import 'package:rick_and_morty_app/widgets/search_character.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -61,6 +62,13 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Rick & Morty'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  showSearch(context: context, delegate: SearchCharacter());
+                },
+                icon: Icon(Icons.search))
+          ],
         ),
         body: Column(
           children: [

@@ -85,6 +85,13 @@ class CharacterProvider with ChangeNotifier {
     }
   }
 
+  Future<List<Character>> getCharacter(String name) async {
+    final result =
+        await http.get(Uri.https(url, 'api/character/', {'name': name}));
+    final response = characterResponseFromJson(result.body);
+    return response.results!;
+  }
+
   Future<List<Episode>> getEpisodes(Character character) async {
     episodes = [];
 

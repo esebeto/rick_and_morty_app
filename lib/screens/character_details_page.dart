@@ -79,8 +79,12 @@ class _CharacterDetailsState extends State<CharacterDetails> {
           ),
           const Text('Episodes'),
           Expanded(
-            child: EpisodeList(
-                character: character, characterProvider: characterProvider),
+            child: characterProvider.episodes.isNotEmpty
+                ? EpisodeList(
+                    character: character, characterProvider: characterProvider)
+                : const Center(
+                    child: CircularProgressIndicator(),
+                  ),
           ),
         ],
       ),
